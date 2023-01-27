@@ -35,52 +35,63 @@ void setup(void) {
 
   Serial.println("");
   // delay(1);
+  
 }
 
 void loop() {
 
+
   CRGB leds[NUM_LEDS];
   FastLED.addLeds<WS2812B, LED_PIN>(leds, NUM_LEDS);
-  CRGB newdot = CRGB::Black;
 
-  if(mpu.getMotionInterruptStatus()) {
-    /* Get new sensor events with the readings */
-    sensors_event_t a, g, temp;
-    mpu.getEvent(&a, &g, &temp);
+  while( true ){
+    CRGB newdot = CRGB::Black;
 
-    /* Print out the values */
-    Serial.print("AccelX:");
-    Serial.print(a.acceleration.x);
-    Serial.print(",");
-    Serial.print("AccelY:");
-    Serial.print(a.acceleration.y);
-    Serial.print(",");
-    Serial.print("AccelZ:");
-    Serial.print(a.acceleration.z);
-    Serial.print(", ");
-    Serial.print("GyroX:");
-    Serial.print(g.gyro.x);
-    Serial.print(",");
-    Serial.print("GyroY:");
-    Serial.print(g.gyro.y);
-    Serial.print(",");
-    Serial.print("GyroZ:");
-    Serial.print(g.gyro.z);
-    Serial.println("");
+    if(mpu.getMotionInterruptStatus()) {
+      /* Get new sensor events with the readings */
+      sensors_event_t a, g, temp;
+      mpu.getEvent(&a, &g, &temp);
 
-    newdot.r = (a.acceleration.x+10);
-    newdot.g = (a.acceleration.y+10);
-    newdot.b = (a.acceleration.z+10);
-  }
+      /* Print out the values */
+      // Serial.print("AccelX:");
+      // Serial.print(a.acceleration.x);
+      // Serial.print(",");
+      // Serial.print("AccelY:");
+      // Serial.print(a.acceleration.y);
+      // Serial.print(",");
+      // Serial.print("AccelZ:");
+      // Serial.print(a.acceleration.z);
+      // Serial.print(", ");
+      // Serial.print("GyroX:");
+      // Serial.print(g.gyro.x);
+      // Serial.print(",");
+      // Serial.print("GyroY:");
+      // Serial.print(g.gyro.y);
+      // Serial.print(",");
+      // Serial.print("GyroZ:");
+      // Serial.print(g.gyro.z);
+      // Serial.println("");
 
+      newdot = CRGB((a.acceleration.x+10), (a.acceleration.y+10), (a.acceleration.z+10));
 
-  for(int dot = 0; dot < NUM_LEDS; dot++) { 
-    leds[dot] = newdot;
+    }
+
+    for(int dot = 0; dot < (NUM_LEDS-1); dot++) { 
+      // Serial.print(dot);
+      // Serial.print(": ");
+      leds[dot] = leds[dot+1];
+      // for(int ax = 0; ax < 3; ax ++){
+        // Serial.print(" ");
+        // Serial.print(leds[dot][ax]); 
+      // }
+      // Serial.print(", ");
+      // delay(30);
+    }
+    // Serial.println("");
+
+    leds[NUM_LEDS-1] = newdot;
+
     FastLED.show();
-    // clear this led for the next time around the loop
-    leds[dot] = CRGB::Black;
-    // delay(30);
+    delay(5); // it appears _no delay_ overloads something and causes the control to reboot
   }
-
-  // delay(10);
 }
