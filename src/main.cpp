@@ -1,6 +1,7 @@
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
+#include <FastLED.h>
 
 Adafruit_MPU6050 mpu;
 
@@ -17,6 +18,10 @@ void setup(void) {
     while (1) {
       delay(10);
     }
+
+  #define NUM_LEDS 10
+  #define LED_PIN D6
+
   }
   Serial.println("MPU6050 Found!");
 
@@ -33,6 +38,10 @@ void setup(void) {
 }
 
 void loop() {
+
+  CRGB leds[NUM_LEDS];
+  FastLED.addLeds<WS2812B, LED_PIN>(leds, NUM_LEDS);
+  CRGB newdot = CRGB::Black;
 
   if(mpu.getMotionInterruptStatus()) {
     /* Get new sensor events with the readings */
@@ -58,6 +67,19 @@ void loop() {
     Serial.print("GyroZ:");
     Serial.print(g.gyro.z);
     Serial.println("");
+
+    newdot.r = (a.acceleration.x+10);
+    newdot.g = (a.acceleration.y+10);
+    newdot.b = (a.acceleration.z+10);
+  }
+
+
+  for(int dot = 0; dot < NUM_LEDS; dot++) { 
+    leds[dot] = newdot;
+    FastLED.show();
+    // clear this led for the next time around the loop
+    leds[dot] = CRGB::Black;
+    // delay(30);
   }
 
   // delay(10);
