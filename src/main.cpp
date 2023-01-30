@@ -19,9 +19,6 @@ void setup(void) {
       delay(10);
     }
 
-  #define NUM_LEDS 10
-  #define LED_PIN D6
-
   }
   Serial.println("MPU6050 Found!");
 
@@ -36,6 +33,9 @@ void setup(void) {
   Serial.println("");
   // delay(1);
   
+  #define NUM_LEDS 10
+  #define LED_PIN D6
+
 }
 
 void loop() {
@@ -44,9 +44,14 @@ void loop() {
   CRGB leds[NUM_LEDS];
   FastLED.addLeds<WS2812B, LED_PIN>(leds, NUM_LEDS);
 
+  int sens_const = 10; /*sensor reads +/- 10, const added to make positive*/
+  int sens_bright = 1; /*can be up to 12.5 to use full 8bit range of led - but that's very bright*/
+
   while( true ){
+    // default is blackness
     CRGB newdot = CRGB::Black;
 
+    // only read a new value if movement is detected
     if(mpu.getMotionInterruptStatus()) {
       /* Get new sensor events with the readings */
       sensors_event_t a, g, temp;
@@ -72,7 +77,10 @@ void loop() {
       // Serial.print(g.gyro.z);
       // Serial.println("");
 
-      newdot = CRGB((a.acceleration.x+10), (a.acceleration.y+10), (a.acceleration.z+10));
+      // write new pixel values into newdot
+      newdot = CRGB((a.acceleration.x*sens_bright+sens_const), 
+                    (a.acceleration.y*sens_bright+sens_const), 
+                    (a.acceleration.z*sens_bright+sens_const));
 
     }
 
