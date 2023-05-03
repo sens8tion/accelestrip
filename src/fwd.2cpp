@@ -33,7 +33,7 @@ void setup(void) {
   Serial.println("");
   // delay(1);
   
-  #define NUM_LEDS 120
+  #define NUM_LEDS 80
   #define LED_PIN D4
 
 }
@@ -84,11 +84,10 @@ void loop() {
 
     }
 
-    for(int dot = 0; dot < (NUM_LEDS/2-1); dot++)  { 
+    for(int dot = NUM_LEDS; dot > 0; dot--) { 
       // Serial.print(dot);
       // Serial.print(": ");
-      leds[dot] = leds[dot+1];
-      leds[NUM_LEDS-dot-1] = leds[NUM_LEDS-dot-2];
+      leds[dot] = leds[dot-1];
       // for(int ax = 0; ax < 3; ax ++){
         // Serial.print(" ");
         // Serial.print(leds[dot][ax]); 
@@ -98,8 +97,7 @@ void loop() {
     }
     // Serial.println("");
 
-    leds[NUM_LEDS/2-1] = newdot;
-    leds[NUM_LEDS/2] = newdot;
+    leds[0] = newdot;
 
     FastLED.show();
     delay(10); // it appears _no delay_ overloads something and causes the control to reboot

@@ -23,7 +23,7 @@ void setup(void) {
   Serial.println("MPU6050 Found!");
 
   //setup motion detection
-  // mpu.setHighPassFilter(MPU6050_HIGHPASS_0_63_HZ);
+  mpu.setHighPassFilter(MPU6050_HIGHPASS_0_63_HZ);
   mpu.setMotionDetectionThreshold(1);
   mpu.setMotionDetectionDuration(1);
   mpu.setInterruptPinLatch(true);	// Keep it latched.  Will turn off when reinitialized.
@@ -33,7 +33,7 @@ void setup(void) {
   Serial.println("");
   // delay(1);
   
-  #define NUM_LEDS 120
+  #define NUM_LEDS 10
   #define LED_PIN D4
 
 }
@@ -84,11 +84,10 @@ void loop() {
 
     }
 
-    for(int dot = 0; dot < (NUM_LEDS/2-1); dot++)  { 
+    for(int dot = 0; dot < (NUM_LEDS-1); dot++) { 
       // Serial.print(dot);
       // Serial.print(": ");
       leds[dot] = leds[dot+1];
-      leds[NUM_LEDS-dot-1] = leds[NUM_LEDS-dot-2];
       // for(int ax = 0; ax < 3; ax ++){
         // Serial.print(" ");
         // Serial.print(leds[dot][ax]); 
@@ -98,10 +97,9 @@ void loop() {
     }
     // Serial.println("");
 
-    leds[NUM_LEDS/2-1] = newdot;
-    leds[NUM_LEDS/2] = newdot;
+    leds[NUM_LEDS-1] = newdot;
 
     FastLED.show();
-    delay(10); // it appears _no delay_ overloads something and causes the control to reboot
+    delay(50); // it appears _no delay_ overloads something and causes the control to reboot
   }
 }
